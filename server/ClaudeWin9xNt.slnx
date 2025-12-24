@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="ClaudeWin9xNt.Tests/ClaudeWin9xNtServer.Tests.csproj" />
+  <Project Path="ClaudeWin9xNt/ClaudeWin9xNtServer.csproj" />
+</Solution>

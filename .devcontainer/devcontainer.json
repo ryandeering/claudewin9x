@@ -1,0 +1,20 @@
+{
+  "name": "ClaudeWin9xNt",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "10.0"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "ms-vscode.cpptools"
+      ]
+    }
+  },
+  "postCreateCommand": "dotnet restore server/ClaudeWin9xNt/ClaudeWin9xNtServer.csproj"
+}

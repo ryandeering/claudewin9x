@@ -1,0 +1,30 @@
+# Build outputs
+*.exe
+*.obj
+*.o
+*.pdb
+*.dll
+
+# .NET
+bin/
+obj/
+publish/
+*.user
+
+# MinGW toolchain
+mingw32/
+
+# Temp files
+*.tmp
+*.log
+*.TMP
+
+# IDE
+.vs/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+*.iso

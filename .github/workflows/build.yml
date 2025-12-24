@@ -1,0 +1,105 @@
+name: Build
+
+on:
+  push:
+    branches: [master, main, release]
+  pull_request:
+    branches: [master, main, release]
+
+jobs:
+  build-client:
+    name: Build Win9x Client
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MinGW and cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64 cppcheck
+
+      - name: Run static analysis
+        working-directory: client
+        run: |
+          cppcheck --version
+          cppcheck --std=c99 --enable=warning,performance --error-exitcode=1 \
+            --suppress=missingIncludeSystem --suppress=normalCheckLevelMaxBranches \
+            --suppress=checkersReport \
+            claude.c commands.c handlers.c http.c session.c transfer.c util.c
+
+      - name: Build client
+        working-directory: client
+        run: |
+          i686-w64-mingw32-gcc --version
+          make CC=i686-w64-mingw32-gcc WINDRES=i686-w64-mingw32-windres
+
+      - name: Upload client artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClaudeWin9xNt-Client
+          path: |
+            client/ClaudeWin9xNt-Client.exe
+            client/client.ini
+
+  build-proxy:
+    name: Build Proxy Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build proxy
+        working-directory: server/ClaudeWin9xNt
+        run: dotnet build --configuration Release
+
+      - name: Run tests
+        working-directory: server/ClaudeWin9xNt.Tests
+        run: dotnet test --configuration Release
+
+  publish-proxy:
+    name: Publish Proxy
+    needs: build-proxy
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: macos-latest
+            rid: osx-arm64
+          - os: windows-latest
+            rid: win-x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Install native AOT prerequisites (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      - name: Publish proxy (Native AOT)
+        working-directory: server/ClaudeWin9xNt
+        run: dotnet publish --configuration Release --runtime ${{ matrix.rid }} -o publish/${{ matrix.rid }}
+
+      - name: List published files
+        working-directory: server/ClaudeWin9xNt/publish/${{ matrix.rid }}
+        run: ls -la
+        shell: bash
+
+      - name: Upload proxy artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClaudeWin9xNt-Server-${{ matrix.rid }}
+          path: server/ClaudeWin9xNt/publish/${{ matrix.rid }}/
