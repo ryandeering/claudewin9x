@@ -18,15 +18,15 @@ echo "EXE: $(stat -c%s "$EXE") bytes, INI: $(stat -c%s "$INI") bytes"
 
 # Create 1.44MB FAT12 floppy image
 dd if=/dev/zero of="$IMG" bs=1474560 count=1 2>/dev/null
-mformat -i "$IMG" -f 1440 -v "CLAUDE9X" ::
-mcopy -i "$IMG" "$EXE" "::CLAUDE9X.EXE"
+mformat -i "$IMG" -f 1440 -v "CLAUDEWIN9X" ::
+mcopy -i "$IMG" "$EXE" "::CLAUDWIN9X.EXE"
 mcopy -i "$IMG" "$INI" "::CLIENT.INI"
 echo "Created $IMG ($(stat -c%s "$IMG") bytes)"
 
 # Create ISO9660 CD-ROM image
 TMPDIR=$(mktemp -d)
-cp "$EXE" "$TMPDIR/CLAUDE9X.EXE"
+cp "$EXE" "$TMPDIR/CLAUDEWIN9X.EXE"
 cp "$INI" "$TMPDIR/CLIENT.INI"
-genisoimage -o "$ISO" -V "CLAUDE9X" -r -J "$TMPDIR" 2>/dev/null
+genisoimage -o "$ISO" -V "CLAUDEWIN9X" -r -J "$TMPDIR" 2>/dev/null
 rm -rf "$TMPDIR"
 echo "Created $ISO ($(stat -c%s "$ISO") bytes)"

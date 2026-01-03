@@ -3,10 +3,11 @@
 Claude Code CLI access on Windows 95/98/2000/XP+ via a bridge server.
 
 [![Build](https://github.com/ryandeering/claude-win9x/actions/workflows/build.yml/badge.svg)](https://github.com/ryandeering/claude-win9x/actions/workflows/build.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/ryandeering/claude-win9x)](https://github.com/ryandeering/claude-win9x/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/ryandeering)
 
-📖 **[Read the blog post](https://ryandeering.ie/posts/claudewin9x/)**
+**[Download latest release](https://github.com/ryandeering/claude-win9x/releases/latest)** | **[Read the blog post](https://ryandeering.ie/posts/claudewin9x/)**
 
 <br>
 
@@ -28,11 +29,10 @@ Claude Code CLI access on Windows 95/98/2000/XP+ via a bridge server.
 └─────────────────────┘         └─────────────────────┘         └─────────────────────┘
 ```
 
-
 - Server spawns Claude Code CLI and communicates via JSON over stdio
 - Claude Code requests file/command operations via HTTP to the server
 - Server queues these operations for the client to poll and execute locally
-- All connections initiated by client 
+- All connections initiated by client
 
 ## Prerequisites
 
@@ -124,4 +124,3 @@ Published as a native AOT binary - there's no runtime required (woo!). Requires 
 
 - [cJSON](https://github.com/DaveGamble/cJSON) - MIT
 - Special thanks to Romane for making the icons in theme with the old Windows style.
-
