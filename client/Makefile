@@ -1,34 +1,36 @@
-CC ?= gcc
-WINDRES ?= windres
-CFLAGS = -std=c99 -O3 -Wall -Wextra -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -I.
-LDFLAGS = -static -lws2_32 -Wl,--subsystem,console:4.0
+
+CC = wcc386
+RC = wrc
+LINKER = wlink
+
+# -za99: C99 mode, -3: 386 target, -bt=nt: Win32 target, -ox: max optimization, -wx: max warnings
+CFLAGS = -za99 -3 -bt=nt -ox -wx
 
 TARGET = ClaudeWin9x-Client.exe
 RESOURCE = ClaudeWin9xClient.rc
-RESOURCE_OBJ = ClaudeWin9xClient.res
+RESOURCE_RES = ClaudeWin9xClient.res
 
 SOURCES = claude.c commands.c handlers.c http.c session.c transfer.c util.c
 THIRD_PARTY = third_party/cJSON.c
-LINT_SOURCES = $(SOURCES)
+
+OBJECTS = claude.obj commands.obj handlers.obj http.obj session.obj transfer.obj util.obj cJSON.obj
 
 all: $(TARGET)
 
-$(RESOURCE_OBJ): $(RESOURCE)
-	$(WINDRES) $(RESOURCE) -O coff -o $(RESOURCE_OBJ)
+.c.obj:
+	$(CC) $(CFLAGS) $<
 
-$(TARGET): $(SOURCES) $(THIRD_PARTY) $(if $(shell which $(WINDRES) 2>/dev/null),$(RESOURCE_OBJ),)
-	$(CC) $(CFLAGS) $(SOURCES) $(THIRD_PARTY) $(if $(shell which $(WINDRES) 2>/dev/null),$(RESOURCE_OBJ),) -o $(TARGET) $(LDFLAGS)
+cJSON.obj: third_party/cJSON.c
+	$(CC) $(CFLAGS) -fo=cJSON.obj $<
 
-lint:
-	cppcheck --std=c99 --enable=warning,performance --error-exitcode=1 \
-		--suppress=missingIncludeSystem --suppress=normalCheckLevelMaxBranches \
-		--suppress=checkersReport $(LINT_SOURCES)
+$(RESOURCE_RES): $(RESOURCE)
+	$(RC) -q -r -fo=$@ $<
 
-lint-all:
-	cppcheck --std=c99 --enable=all --inconclusive \
-		--suppress=missingIncludeSystem $(LINT_SOURCES)
+$(TARGET): $(OBJECTS) $(RESOURCE_RES)
+	$(LINKER) system nt name $@ file {$(OBJECTS)} library ws2_32
+	$(RC) -q $(RESOURCE_RES) $@
 
-clean:
-	rm -f $(TARGET) $(RESOURCE_OBJ)
-
-.PHONY: all clean lint lint-all
+clean: .SYMBOLIC
+	-del *.obj
+	-del $(RESOURCE_RES)
+	-del $(TARGET)

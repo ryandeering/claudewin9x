@@ -105,10 +105,10 @@ Environment variables (if Claude Code is in non-standard location):
 
 ```bash
 cd client
-make
+wmake
 ```
 
-Builds a standalone C99 program targeting Win32. Requires i686 MinGW-w64 with msvcrt runtime.
+Builds a standalone executable targeting Win32, 386 and above. Minimum supported OS is Windows 95 OSR 2. Build using [Open Watcom V2](https://github.com/open-watcom/open-watcom-v2/releases/tag/Current-build).
 
 ### Server
 

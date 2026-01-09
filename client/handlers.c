@@ -513,7 +513,7 @@ static int execute_command_nt(const char *command, char *output,
     }
 
     snprintf(cmdline, sizeof(cmdline), "cmd.exe /c %s 2>&1", command);
-    pipe = popen(cmdline, "r");
+    pipe = _popen(cmdline, "r");
     if (!pipe) {
         strncpy(output, "Failed to execute command", output_size - 1);
         output[output_size - 1] = '\0';
@@ -525,7 +525,7 @@ static int execute_command_nt(const char *command, char *output,
     }
     output[output_len] = '\0';
 
-    exit_code = pclose(pipe);
+    exit_code = _pclose(pipe);
     return exit_code;
 }
 
